@@ -8,7 +8,7 @@ Veja em `app-teste/` uma demonstração de uma conexão SSH em Go com opção de
 ## Código-fonte do pacote SSH (`x-crypto/`)
 
 O diretório `x-crypto/` contém uma cópia do módulo `golang.org/x/crypto` (v0.57.0),
-que inclui o pacote `golang.org/x/crypto/ssh`. O demo usa essa cópia local por meio
+reduzida ao pacote `golang.org/x/crypto/ssh` e às suas dependências. O demo usa essa cópia local por meio
 de uma diretiva `replace` em `app-teste/go.mod`:
 
 ```

@@ -15,7 +15,6 @@ export PATH="/usr/local/go/bin:${PATH}"
 go version || { echo "Failed to install Go 1.26. Exiting 1." ; exit 1 ;}
 
 cd app-teste/
-go mod init ssh-pqc-demo
 go mod tidy
 
 if [ "${DOCKERNAME}" == "sshclient" ] ; then 

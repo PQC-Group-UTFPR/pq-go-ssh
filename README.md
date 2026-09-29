@@ -5,6 +5,28 @@ Experimenting with PQC in SSH
 
 Veja em `app-teste/` uma demonstração de uma conexão SSH em Go com opção de depuração do protocolo.
 
+## Código-fonte do pacote SSH (`x-crypto/`)
+
+O diretório `x-crypto/` contém uma cópia do módulo `golang.org/x/crypto` (v0.57.0),
+reduzida ao pacote `golang.org/x/crypto/ssh` e às suas dependências. O demo usa essa cópia local por meio
+de uma diretiva `replace` em `app-teste/go.mod`:
+
+```
+replace golang.org/x/crypto => ../x-crypto
+```
+
+Portanto, para pesquisar/implementar autenticação pós-quântica, modifique o código em
+`x-crypto/ssh/` (ex.: `keys.go`, `certs.go`, `client_auth.go`, `server.go`) e execute
+o demo normalmente. Com `SSH_DEBUG=1`, cliente e servidor mostram qual cópia do pacote
+foi compilada. Veja `x-crypto/UPSTREAM.md` para detalhes da versão e de como atualizar.
+
+Testes do pacote SSH:
+
+```bash
+cd x-crypto
+go test ./ssh/...
+```
+
 
 ## Disclaimer 
 - Em `app-teste/` A função de criação do servidor e cliente SSH, a informação e exemplo de depuração SSH, bem como este README foram gerados inicialmente a partir de prompt ao modelo Sonnet 5 / Claude. A estrutura foi modificada posteriormente (//Descrever), código também modificado, e inserido em um repositório dockerizado almejando reprodutibilidade.

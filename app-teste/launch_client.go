@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"os"
+	runtimedebug "runtime/debug"
 	"time"
 
 	"golang.org/x/crypto/ssh"
@@ -53,6 +54,7 @@ func main() {
 	
 	if debug  == "1" {
 		printSupportedAlgorithms("client")
+		logSSHModule("client")
 		logCryptoArtifacts("client", clientssh.Conn)
 	}
 	//inicia a sessão ssh
@@ -106,4 +108,23 @@ func logCryptoArtifacts(role string, conn ssh.Conn) {
 	log.Printf("[%s] Chave de autenticação do servidor: %s", role, na.HostKey)
 	//log.Printf("[%s] cifra/MAC (leitura):  %s / %q", role, na.Read.Cipher, na.Read.MAC)
 	//log.Printf("[%s] cifra/MAC (escrita):  %s / %q", role, na.Write.Cipher, na.Write.MAC)
+}
+
+// logSSHModule mostra qual cópia do pacote golang.org/x/crypto/ssh foi compilada.
+// Com o "replace" do go.mod, deve apontar para a cópia local em ../x-crypto.
+func logSSHModule(role string) {
+	info, ok := runtimedebug.ReadBuildInfo()
+	if !ok {
+		return
+	}
+	for _, dep := range info.Deps {
+		if dep.Path != "golang.org/x/crypto" {
+			continue
+		}
+		if dep.Replace != nil {
+			log.Printf("[%s][debug] golang.org/x/crypto %s substituído pela cópia local: %s", role, dep.Version, dep.Replace.Path)
+		} else {
+			log.Printf("[%s][debug] golang.org/x/crypto %s (upstream, sem cópia local)", role, dep.Version)
+		}
+	}
 }

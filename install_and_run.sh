@@ -6,13 +6,13 @@ IPSERVER=$2
 
 sudo apt install -y wget unzip git pkg-config 
 
-echo -e "\nInstaling Go 1.26...."
-wget https://go.dev/dl/go1.26.0.linux-amd64.tar.gz -O /tmp/go1.26.0.tar.gz || { echo "Failed to download Go 1.26. Exiting" ; exit 1 ;}
+echo -e "\nInstaling Go 1.27...."
+wget https://go.dev/dl/go1.27.3.linux-amd64.tar.gz -O /tmp/go1.27.3.tar.gz || { echo "Failed to download Go 1.27. Exiting" ; exit 1 ;}
 
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf /tmp/go1.26.0.tar.gz
+sudo tar -C /usr/local -xzf /tmp/go1.27.3.tar.gz
 export PATH="/usr/local/go/bin:${PATH}"
-go version || { echo "Failed to install Go 1.26. Exiting 1." ; exit 1 ;}
+go version || { echo "Failed to install Go 1.27. Exiting 1." ; exit 1 ;}
 
 cd app-teste/
 go mod tidy

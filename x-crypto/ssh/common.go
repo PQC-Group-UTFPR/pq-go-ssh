@@ -173,6 +173,7 @@ var (
 		KeyAlgoECDSA384,
 		KeyAlgoECDSA521,
 		KeyAlgoED25519,
+		KeyAlgoMLDSA44,
 	}
 	// defaultHostKeyAlgos specifies the default preference for host-key
 	// algorithms in preference order.
@@ -281,6 +282,9 @@ func hashFunc(format string) (crypto.Hash, error) {
 	case KeyAlgoED25519:
 		// KeyAlgoED25519 doesn't pre-hash.
 		return 0, nil
+	case KeyAlgoMLDSA44:
+		// ML-DSA assina a mensagem diretamente, sem pré-hash.
+		return 0, nil
 	case KeyAlgoRSA, InsecureKeyAlgoDSA:
 		if fips140.Enabled() {
 			return 0, fmt.Errorf("ssh: hash algorithm for format %q not allowed in FIPS 140 mode", format)
@@ -342,6 +346,7 @@ func keyFormatForAlgorithm(sigAlgo string) string {
 	case CertAlgoRSAv01, CertAlgoRSASHA256v01, CertAlgoRSASHA512v01:
 		return CertAlgoRSAv01
 	case KeyAlgoED25519,
+		KeyAlgoMLDSA44,
 		KeyAlgoSKED25519,
 		KeyAlgoSKECDSA256,
 		KeyAlgoECDSA256,

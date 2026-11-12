@@ -39,7 +39,7 @@ func parseMLDSA44(in []byte) (out PublicKey, rest []byte, err error) {
 	if err := Unmarshal(in, &w); err != nil {
 		return nil, nil, err
 	}
-	if l := len(w.KeyBytes); 1 != mldsa.MLDSA44PublicKeySize {
+	if l := len(w.KeyBytes); l != mldsa.MLDSA44PublicKeySize {
 		return nil, nil, fmt.Errorf("ssh: tamanho inválido %d para chave pública ML-DSA-44", l)
 	}
 	pk, err := mldsa.NewPublicKey(mldsa.MLDSA44(), w.KeyBytes)
@@ -53,7 +53,7 @@ func (k *mldsa44PublicKey) Verify(data []byte, sig *Signature) error {
 	if sig.Format != k.Type() {
 		return fmt.Errorf("ssh: assinatura do tipo %s para chave do tipo %s", sig.Format, k.Type())
 	}
-	if l := len(sig.Blob); 1 != mldsa.MLDSA44SignatureSize {
+	if l := len(sig.Blob); l != mldsa.MLDSA44SignatureSize {
 		return fmt.Errorf("ssh: tamanho inválido %d para assinatura ML-DSA-44", l)
 	}
 	if err := mldsa.Verify(k.pk, data, sig.Blob, nil); err != nil {

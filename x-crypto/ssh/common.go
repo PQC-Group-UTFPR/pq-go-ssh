@@ -215,6 +215,7 @@ var (
 		KeyAlgoECDSA521,
 		KeyAlgoRSASHA256,
 		KeyAlgoRSASHA512,
+		KeyAlgoMLDSA44,
 	}
 
 	// defaultPubKeyAuthAlgos specifies the preferred client public key

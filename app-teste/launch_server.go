@@ -2,7 +2,9 @@
 package main
 
 import (
+	"crypto"
 	"crypto/ed25519"
+	"crypto/mldsa"
 	"crypto/rand"
 	"encoding/hex"
 	"flag"
@@ -28,7 +30,7 @@ func main() {
 	debug := os.Getenv("SSH_DEBUG") 
 	
 	//gera um par de chaves de autenticação
-	hostSigner, fingerprint, err := generateHostKey()
+	hostSigner, fingerprint, err := generateHostKey(os.Getenv("HOSTKEY_ALG"))
 	if err != nil {
 		log.Fatalf("[server] falha ao gerar chave do host: %v", err)
 	}
@@ -153,15 +155,28 @@ func handleSession(channel ssh.Channel, requests <-chan *ssh.Request) {
 
 //Gera um par de chaves ed25519.
 //TODO: receber o nome do algoritmo como parâmetro da função
-func generateHostKey() (ssh.Signer, string, error) {
-	_, priv, err := ed25519.GenerateKey(rand.Reader)
+func generateHostKey(alg string) (ssh.Signer, string, error) {
+	var priv crypto.Signer
+	var err error
+
+	switch alg {
+	case "", "ed25519":
+		_, priv, err = ed25519.GenerateKey(rand.Reader)
+	case "mldsa44":
+		priv, err = mldsa.GenerateKey(mldsa.MLDSA44())
+	default:
+		return nil, "", fmt.Errorf("Algoritmo de host key desconhecido: %q (use ed25519 ou mldsa44)", alg)	
+	}
+
 	if err != nil {
 		return nil, "", err
 	}
+
 	signer, err := ssh.NewSignerFromKey(priv)
 	if err != nil {
 		return nil, "", err
 	}
+
 	return signer, ssh.FingerprintSHA256(signer.PublicKey()), nil
 }
 

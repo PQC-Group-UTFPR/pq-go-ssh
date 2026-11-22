@@ -1,4 +1,4 @@
-// launch_client.go 
+// launch_client.go
 package main
 
 import (
@@ -42,8 +42,9 @@ func main() {
 				ssh.CipherAES256GCM,
 			},
 		},
-		HostKeyCallback: logAndAcceptHostKey,
-		Timeout:         5 * time.Second,
+		HostKeyAlgorithms: []string{ssh.KeyAlgoMLDSA44, ssh.KeyAlgoED25519},
+		HostKeyCallback:   logAndAcceptHostKey,
+		Timeout:           5 * time.Second,
 	}
 
 	clientssh, err := ssh.Dial("tcp", *addr, config)
@@ -51,8 +52,8 @@ func main() {
 		log.Fatalf("[client] falha ao conectar: %v", err)
 	}
 	defer clientssh.Close()
-	
-	if debug  == "1" {
+
+	if debug == "1" {
 		printSupportedAlgorithms("client")
 		logSSHModule("client")
 		logCryptoArtifacts("client", clientssh.Conn)
@@ -78,23 +79,23 @@ func main() {
 	}
 }
 
-//Callback da configuração da sessão SSH (aceita a chave; idealmente poderia comparar com o "Known hosts" do SSH)
+// Callback da configuração da sessão SSH (aceita a chave; idealmente poderia comparar com o "Known hosts" do SSH)
 func logAndAcceptHostKey(hostname string, remote net.Addr, key ssh.PublicKey) error {
 	log.Printf("[client] host key  de %s ACEITA POR PADRÃO. Algoritmo=%s fingerprint=%s",
 		remote, key.Type(), ssh.FingerprintSHA256(key))
 	return nil
 }
 
-//Exibir algoritmos Suportados (cliente)
+// Exibir algoritmos Suportados (cliente)
 func printSupportedAlgorithms(role string) {
 	algos := ssh.SupportedAlgorithms()
 	log.Printf("[%s][debug] KeyExchanges suportados: %v", role, algos.KeyExchanges)
 	log.Printf("[%s][debug] HostKeys suportados: %v", role, algos.HostKeys)
-//	log.Printf("[%s][debug] Ciphers suportados: %v", role, algos.Ciphers)
-//	log.Printf("[%s][debug] MACs suportados: %v", role, algos.MACs)
+	// log.Printf("[%s][debug] Ciphers suportados: %v", role, algos.Ciphers)
+	// log.Printf("[%s][debug] MACs suportados: %v", role, algos.MACs)
 }
 
-//Função para debug da parte de criptografia negociada. Não inclui a autenticação da parte cliente
+// Função para debug da parte de criptografia negociada. Não inclui a autenticação da parte cliente
 func logCryptoArtifacts(role string, conn ssh.Conn) {
 	log.Printf("[%s] session ID (H): %s", role, hex.EncodeToString(conn.SessionID()))
 

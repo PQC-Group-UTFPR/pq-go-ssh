@@ -1,4 +1,4 @@
-//launch_server.go
+// launch_server.go
 package main
 
 import (
@@ -12,8 +12,8 @@ import (
 	"log"
 	"net"
 	"os"
-	runtimedebug "runtime/debug"
 	"os/exec"
+	runtimedebug "runtime/debug"
 
 	"golang.org/x/crypto/ssh"
 )
@@ -27,8 +27,8 @@ func main() {
 	addr := flag.String("addr", "127.0.0.1:2222", "endereço TCP para escutar")
 	flag.Parse()
 
-	debug := os.Getenv("SSH_DEBUG") 
-	
+	debug := os.Getenv("SSH_DEBUG")
+
 	//gera um par de chaves de autenticação
 	hostSigner, fingerprint, err := generateHostKey(os.Getenv("HOSTKEY_ALG"))
 	if err != nil {
@@ -80,7 +80,7 @@ func main() {
 	}
 }
 
-//Tratamento da conexão vinda do cliente para criar uma sessão
+// Tratamento da conexão vinda do cliente para criar uma sessão
 func handleConn(nConn net.Conn, config *ssh.ServerConfig) {
 	defer nConn.Close()
 
@@ -153,8 +153,7 @@ func handleSession(channel ssh.Channel, requests <-chan *ssh.Request) {
 	}
 }
 
-//Gera um par de chaves ed25519.
-//TODO: receber o nome do algoritmo como parâmetro da função
+// Gera a chave do host com o algoritmo escolhido
 func generateHostKey(alg string) (ssh.Signer, string, error) {
 	var priv crypto.Signer
 	var err error
@@ -165,7 +164,7 @@ func generateHostKey(alg string) (ssh.Signer, string, error) {
 	case "mldsa44":
 		priv, err = mldsa.GenerateKey(mldsa.MLDSA44())
 	default:
-		return nil, "", fmt.Errorf("Algoritmo de host key desconhecido: %q (use ed25519 ou mldsa44)", alg)	
+		return nil, "", fmt.Errorf("algoritmo de host key desconhecido: %q (use ed25519 ou mldsa44)", alg)
 	}
 
 	if err != nil {
@@ -180,18 +179,18 @@ func generateHostKey(alg string) (ssh.Signer, string, error) {
 	return signer, ssh.FingerprintSHA256(signer.PublicKey()), nil
 }
 
-//Exibe algoritmos suportados
+// Exibe algoritmos suportados
 func printSupportedAlgorithms(role string) {
 	algos := ssh.SupportedAlgorithms()
 	log.Printf("[%s][debug] KeyExchanges suportados: %v", role, algos.KeyExchanges)
 	log.Printf("[%s][debug] HostKeys suportados: %v", role, algos.HostKeys)
 }
 
-// logCryptoArtifacts registra qual o usuário que conectou e imprime os artefatos criptográficos da conexão 
+// logCryptoArtifacts registra qual o usuário que conectou e imprime os artefatos criptográficos da conexão
 func logCryptoArtifacts(role string, conn ssh.Conn) {
 	log.Printf("[%s] usuário autenticado: %s", role, conn.User())
 	log.Printf("[%s] session ID (H): %s", role, hex.EncodeToString(conn.SessionID()))
-	
+
 	ac, ok := conn.(ssh.AlgorithmsConnMetadata)
 	if !ok {
 		log.Printf("[%s] esta versão de x/crypto/ssh não expõe NegotiatedAlgorithms", role)

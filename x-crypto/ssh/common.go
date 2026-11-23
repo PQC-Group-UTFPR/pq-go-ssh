@@ -174,6 +174,8 @@ var (
 		KeyAlgoECDSA521,
 		KeyAlgoED25519,
 		KeyAlgoMLDSA44,
+		KeyAlgoMLDSA65,
+		KeyAlgoMLDSA87,
 	}
 	// defaultHostKeyAlgos specifies the default preference for host-key
 	// algorithms in preference order.
@@ -216,6 +218,8 @@ var (
 		KeyAlgoRSASHA256,
 		KeyAlgoRSASHA512,
 		KeyAlgoMLDSA44,
+		KeyAlgoMLDSA65,
+		KeyAlgoMLDSA87,
 	}
 
 	// defaultPubKeyAuthAlgos specifies the preferred client public key
@@ -283,7 +287,7 @@ func hashFunc(format string) (crypto.Hash, error) {
 	case KeyAlgoED25519:
 		// KeyAlgoED25519 doesn't pre-hash.
 		return 0, nil
-	case KeyAlgoMLDSA44:
+	case KeyAlgoMLDSA44, KeyAlgoMLDSA65, KeyAlgoMLDSA87:
 		// ML-DSA assina a mensagem diretamente, sem pré-hash.
 		return 0, nil
 	case KeyAlgoRSA, InsecureKeyAlgoDSA:
@@ -348,6 +352,8 @@ func keyFormatForAlgorithm(sigAlgo string) string {
 		return CertAlgoRSAv01
 	case KeyAlgoED25519,
 		KeyAlgoMLDSA44,
+		KeyAlgoMLDSA65,
+		KeyAlgoMLDSA87,
 		KeyAlgoSKED25519,
 		KeyAlgoSKECDSA256,
 		KeyAlgoECDSA256,

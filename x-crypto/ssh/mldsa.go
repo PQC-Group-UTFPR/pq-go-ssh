@@ -3,11 +3,10 @@ package ssh
 import (
 	"crypto"
 	"crypto/mldsa"
-	"errors"
 	"fmt"
 )
 
-// KeyAlgoMLDSA44 eh o nome do algoritmo de host key ML-DSA-44 puro (sem híbrido).
+// Nomes SSH dos algoritmos ML-DSA puros (sem híbrido), para chave de host e de usuário.
 // Não existe nome padronizado para ML-DSA puro no SSH (provisório)
 const (
 	KeyAlgoMLDSA44 = "ssh-mldsa44@pq-go-ssh" // nivel 2
@@ -30,7 +29,7 @@ func mldsaAlgoName(p mldsa.Parameters) string {
 	return ""
 }
 
-// mldsaPublicKey embrulha uma chave pública ML-DSA-44 da biblioteca padrão
+// mldsaPublicKey embrulha uma chave pública ML-DSA da biblioteca padrão
 type mldsaPublicKey struct {
 	pk *mldsa.PublicKey
 }
@@ -50,7 +49,11 @@ func (k *mldsaPublicKey) Marshal() []byte {
 	return Marshal(&w)
 }
 
-func parseMLDSA44(in []byte) (out PublicKey, rest []byte, err error) {
+func parseMLDSA(in []byte, algo string) (out PublicKey, rest []byte, err error) {
+	params, ok := mldsaParams[algo]
+	if !ok {
+		return nil, nil, fmt.Errorf("ssh: algoritmo ML-DSA desconhecido: %s", algo)
+	}
 	var w struct {
 		KeyBytes []byte
 		Rest     []byte `ssh:"rest"`
@@ -58,10 +61,10 @@ func parseMLDSA44(in []byte) (out PublicKey, rest []byte, err error) {
 	if err := Unmarshal(in, &w); err != nil {
 		return nil, nil, err
 	}
-	if l := len(w.KeyBytes); l != mldsa.MLDSA44PublicKeySize {
-		return nil, nil, fmt.Errorf("ssh: tamanho inválido %d para chave pública ML-DSA-44", l)
+	if l := len(w.KeyBytes); l != params.PublicKeySize() {
+		return nil, nil, fmt.Errorf("ssh: tamanho inválido %d para chave pública %s", l, params)
 	}
-	pk, err := mldsa.NewPublicKey(mldsa.MLDSA44(), w.KeyBytes)
+	pk, err := mldsa.NewPublicKey(params, w.KeyBytes)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -72,11 +75,12 @@ func (k *mldsaPublicKey) Verify(data []byte, sig *Signature) error {
 	if sig.Format != k.Type() {
 		return fmt.Errorf("ssh: assinatura do tipo %s para chave do tipo %s", sig.Format, k.Type())
 	}
-	if l := len(sig.Blob); l != mldsa.MLDSA44SignatureSize {
-		return fmt.Errorf("ssh: tamanho inválido %d para assinatura ML-DSA-44", l)
+	params := k.pk.Parameters()
+	if l := len(sig.Blob); l != params.SignatureSize() {
+		return fmt.Errorf("ssh: tamanho inválido %d para assinatura %s", l, params)
 	}
 	if err := mldsa.Verify(k.pk, data, sig.Blob, nil); err != nil {
-		return errors.New("ssh: assinatura ML-DSA-44 não confere")
+		return fmt.Errorf("ssh: assinatura %s não confere", params)
 	}
 	return nil
 }

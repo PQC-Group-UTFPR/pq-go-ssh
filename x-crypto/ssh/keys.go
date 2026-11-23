@@ -84,8 +84,8 @@ func parsePubKey(in []byte, algo string) (pubKey PublicKey, rest []byte, err err
 		return parseED25519(in)
 	case KeyAlgoSKED25519:
 		return parseSKEd25519(in)
-	case KeyAlgoMLDSA44:
-		return parseMLDSA44(in)
+	case KeyAlgoMLDSA44, KeyAlgoMLDSA65, KeyAlgoMLDSA87:
+		return parseMLDSA(in, algo)
 	case CertAlgoRSAv01, InsecureCertAlgoDSAv01, CertAlgoECDSA256v01, CertAlgoECDSA384v01, CertAlgoECDSA521v01, CertAlgoSKECDSA256v01, CertAlgoED25519v01, CertAlgoSKED25519v01:
 		cert, err := parseCert(in, certKeyAlgoNames[algo])
 		if err != nil {
@@ -1306,9 +1306,9 @@ func NewPublicKey(key interface{}) (PublicKey, error) {
 			return nil, fmt.Errorf("ssh: invalid size %d for Ed25519 public key", l)
 		}
 		return ed25519PublicKey(key), nil
-	// Primeiro caso adicionado: mldsa44 (nivel 1)
+	// Parametrizado para ml-dsa-44/65/87
 	case *mldsa.PublicKey:
-		if key.Parameters() != mldsa.MLDSA44() {
+		if mldsaAlgoName(key.Parameters()) == "" {
 			return nil, fmt.Errorf("ssh: parâmetros ML-DSA não suportados: %s", key.Parameters())
 		}
 		return &mldsaPublicKey{key}, nil

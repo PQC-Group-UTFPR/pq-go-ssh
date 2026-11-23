@@ -9,23 +9,42 @@ import (
 
 // KeyAlgoMLDSA44 eh o nome do algoritmo de host key ML-DSA-44 puro (sem híbrido).
 // Não existe nome padronizado para ML-DSA puro no SSH (provisório)
-const KeyAlgoMLDSA44 = "ssh-mldsa44@pq-go-ssh"
+const (
+	KeyAlgoMLDSA44 = "ssh-mldsa44@pq-go-ssh" // nivel 2
+	KeyAlgoMLDSA65 = "ssh-mldsa65@pq-go-ssh" // nivel 3
+	KeyAlgoMLDSA87 = "ssh-mldsa87@pq-go-ssh" // nivel 5
+)
 
-// mldsa44PublicKey embrulha uma chave pública ML-DSA-44 da biblioteca padrão
-type mldsa44PublicKey struct {
+var mldsaParams = map[string]mldsa.Parameters{
+	KeyAlgoMLDSA44: mldsa.MLDSA44(),
+	KeyAlgoMLDSA65: mldsa.MLDSA65(),
+	KeyAlgoMLDSA87: mldsa.MLDSA87(),
+}
+
+func mldsaAlgoName(p mldsa.Parameters) string {
+	for nome, ficha := range mldsaParams {
+		if ficha == p {
+			return nome
+		}
+	}
+	return ""
+}
+
+// mldsaPublicKey embrulha uma chave pública ML-DSA-44 da biblioteca padrão
+type mldsaPublicKey struct {
 	pk *mldsa.PublicKey
 }
 
-func (k *mldsa44PublicKey) Type() string {
-	return KeyAlgoMLDSA44
+func (k *mldsaPublicKey) Type() string {
+	return mldsaAlgoName(k.pk.Parameters())
 }
 
-func (k *mldsa44PublicKey) Marshal() []byte {
+func (k *mldsaPublicKey) Marshal() []byte {
 	w := struct {
 		Name     string
 		KeyBytes []byte
 	}{
-		KeyAlgoMLDSA44,
+		k.Type(),
 		k.pk.Bytes(),
 	}
 	return Marshal(&w)
@@ -46,10 +65,10 @@ func parseMLDSA44(in []byte) (out PublicKey, rest []byte, err error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	return &mldsa44PublicKey{pk}, w.Rest, nil
+	return &mldsaPublicKey{pk}, w.Rest, nil
 }
 
-func (k *mldsa44PublicKey) Verify(data []byte, sig *Signature) error {
+func (k *mldsaPublicKey) Verify(data []byte, sig *Signature) error {
 	if sig.Format != k.Type() {
 		return fmt.Errorf("ssh: assinatura do tipo %s para chave do tipo %s", sig.Format, k.Type())
 	}
@@ -62,6 +81,6 @@ func (k *mldsa44PublicKey) Verify(data []byte, sig *Signature) error {
 	return nil
 }
 
-func (k *mldsa44PublicKey) CryptoPublicKey() crypto.PublicKey {
+func (k *mldsaPublicKey) CryptoPublicKey() crypto.PublicKey {
 	return k.pk
 }

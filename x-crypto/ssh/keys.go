@@ -1311,7 +1311,7 @@ func NewPublicKey(key interface{}) (PublicKey, error) {
 		if key.Parameters() != mldsa.MLDSA44() {
 			return nil, fmt.Errorf("ssh: parâmetros ML-DSA não suportados: %s", key.Parameters())
 		}
-		return &mldsa44PublicKey{key}, nil
+		return &mldsaPublicKey{key}, nil
 	default:
 		return nil, fmt.Errorf("ssh: unsupported key type %T", key)
 	}

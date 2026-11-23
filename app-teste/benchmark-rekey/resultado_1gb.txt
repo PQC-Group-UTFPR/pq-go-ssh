@@ -1,0 +1,16 @@
+﻿[REKEY-COMPLETO] Handshake KEX finalizado em 1.3262ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.3537ms
+
+==================================================
+[BENCHMARK] KEX: mlkem768x25519-sha256
+[BENCHMARK] Handshake Inicial: 1.9996ms
+[BENCHMARK] Transferindo 1 GB (1073741824 bytes)...
+==================================================
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.3487ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.3841ms
+==================================================
+[RESULTADO] Volume: 1 GB
+[RESULTADO] Tempo Total Transferência: 2.859704414s
+[RESULTADO] Vazão Média (Throughput): 358.08 MB/s
+==================================================
+

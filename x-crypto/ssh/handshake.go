@@ -13,6 +13,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"time"
 )
 
 // debugHandshake, if set, prints messages sent and received.  Key
@@ -648,6 +649,11 @@ func (t *handshakeTransport) Close() error {
 }
 
 func (t *handshakeTransport) enterKeyExchange(otherInitPacket []byte) error {
+	inicioKex := time.Now()
+	defer func() {
+		fmt.Printf("[REKEY-COMPLETO] Handshake KEX finalizado em %v\n", time.Since(inicioKex))
+	}()
+
 	if debugHandshake {
 		log.Printf("%s entered key exchange", t.id())
 	}

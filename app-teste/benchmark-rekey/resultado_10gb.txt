@@ -1,0 +1,32 @@
+﻿[REKEY-COMPLETO] Handshake KEX finalizado em 1.296ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.2406ms
+
+==================================================
+[BENCHMARK] KEX: mlkem768x25519-sha256
+[BENCHMARK] Handshake Inicial: 2.2807ms
+[BENCHMARK] Transferindo 10 GB (10737418240 bytes)...
+==================================================
+[REKEY-COMPLETO] Handshake KEX finalizado em 897.9µs
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.0122ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.7956ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 750.5µs
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.953ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 939.1µs
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.5565ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 686.2µs
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.1307ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 720.9µs
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.2631ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 729µs
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.8914ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 977.9µs
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.8659ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 699.1µs
+[REKEY-COMPLETO] Handshake KEX finalizado em 1.2978ms
+[REKEY-COMPLETO] Handshake KEX finalizado em 720.4µs
+==================================================
+[RESULTADO] Volume: 10 GB
+[RESULTADO] Tempo Total Transferência: 27.489884881s
+[RESULTADO] Vazão Média (Throughput): 372.50 MB/s
+==================================================
+
